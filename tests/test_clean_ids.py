@@ -32,6 +32,13 @@ def test_sequence_of_ids(monkeypatch, capsys, test_input, expected_output):
     captured = capsys.readouterr()
     assert captured.out == expected_output
 
+def test_throw_errors(monkeypatch, capsys):
+    fake_input = io.StringIO("kcFsuxaJ1es\nasd123\n")
+    monkeypatch.setattr(sys, "stdin", fake_input)
+    try:
+        main()
+    except Exception as e:
+        pytest.fail(f"main() raised an unexpected exception: {e}")
 
 def test_id_length():
     valid_id = "yV4jyj8Hr1g"
@@ -60,3 +67,7 @@ def test_url_is_valid():
     captured = capsys.readouterr()
     url = f"https://www.youtube.com/watch?v={captured.out.strip()}"
     assert requests.get(url).status_code == 200
+
+@pytest.mark.xfail(reason="non-current python version")
+def test_old_python_version():
+    assert sys.version_info.minor == 12 # expect to fail since we are using the most recent version of python
