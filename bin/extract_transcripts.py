@@ -1,14 +1,19 @@
 #!/usr/bin/env python3
+"""
+This module retrieves raw YouTube transcripts using safely-stored credentials
+from Webshare's residential proxy cluste, then outputs the transcripts
+in JSON Lines format.
+"""
 import sys
 import os
 import json
 import logging
-# TODO: Add the import statement so we have access to the load_dotenv function from dotenv
+# Import statement added so we have access to the load_dotenv function from dotenv
 from dotenv import load_dotenv
 from youtube_transcript_api import YouTubeTranscriptApi
 from youtube_transcript_api.proxies import WebshareProxyConfig
 
-# TODO: use the loaded dotenv function to conditionally load the credentials from .env
+# dotenv function is used to conditionally load the credentials from .env
 load_dotenv()
 
 # Direct logging statements to a shared audit log asset
@@ -19,6 +24,12 @@ logging.basicConfig(
 )
 
 def main():
+    """
+    Executes pipeline to ingest Webshare credentials, set up
+    a YouTubeTranscriptApi object with proxy configurations,
+    and process streaming IDs line-by-line before outputting
+    the raw transcript data to console.
+    """
     logging.info("Pipeline Step 2A (Raw Extraction) started.")
 
     # Ingest routing keys from the local shell environment
@@ -27,8 +38,8 @@ def main():
 
     if proxy_user and proxy_pass:
         logging.info("Proxy credentials detected. Routing traffic via Webshare Residential network.")
-        # TODO:  Use YouTubeTranscriptApi with a keyword argument proxy_config.
-        #    Use WebshareProxyConfig to create the proxy using the username and password
+        # YouTubeTranscriptApi is used with a keyword argument proxy_config.
+        # WebshareProxyConfig is used to create the proxy using the username and password
         ytt_api = YouTubeTranscriptApi(
                 proxy_config=WebshareProxyConfig(
                     proxy_username=proxy_user,
@@ -56,14 +67,13 @@ def main():
             raw_text = " ".join([f"[{item['start']}] {item['text']}" for item in transcript_list])
 
             # Pack into a simple intermediary JSON object and emit to stdout
-            # TODO: Create a variable called payload
-            #    Store a dict object with video_id and raw_text as keys, with the appropriate values
-            #    Then use sys.stdout to write that to console
-            #    Finally, flush the stdout 
+            # Payload variable created as a dict object with video_id and raw_text as keys,
+            # stores the appropriate values
+            # sys.stdout is used to write the payload to console then stdout is flushed
             payload = {"video_id": video_id,
                        "raw_text": raw_text}
             sys.stdout.write(json.dumps(payload) + "\n")
-            sys.stdout.flush() 
+            sys.stdout.flush()
 
         except Exception as e:
             logging.error(f"Failed to fetch YouTube transcript for {video_id}: {str(e)}")
