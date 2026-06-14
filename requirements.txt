@@ -2,3 +2,5 @@ pandas
 numpy
 pytest
 pylint
+dotenv
+youtube_transcript_api
