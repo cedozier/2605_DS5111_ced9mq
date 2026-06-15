@@ -13,7 +13,7 @@ jobs:
     # Define the execution matrix
     strategy:
       matrix:
-        python-version: ['3.12', '3.13']
+        python-version: ['3.14']
       # Optional: set fail-fast to false so one failing version doesn't cancel the other
       fail-fast: false
       
