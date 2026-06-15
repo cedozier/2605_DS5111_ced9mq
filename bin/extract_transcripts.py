@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """
 This module retrieves raw YouTube transcripts using safely-stored credentials
-from Webshare's residential proxy cluste, then outputs the transcripts
+from Webshare's residential proxy cluster, then outputs the transcripts
 in JSON Lines format.
 """
 import sys
