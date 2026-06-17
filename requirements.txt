@@ -4,3 +4,5 @@ pytest
 pylint
 dotenv
 youtube_transcript_api
+jupyter
+jupyterlab
