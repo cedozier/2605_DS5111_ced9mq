@@ -6,3 +6,4 @@ dotenv
 youtube_transcript_api
 jupyter
 jupyterlab
+google-genai
