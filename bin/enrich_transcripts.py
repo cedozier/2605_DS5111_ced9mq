@@ -29,7 +29,7 @@ def main():
     logging.info("Pipeline Step 2B (Gemini Enrichment) started.")
     
     # -------------------------------------------------------------------------
-    # TODO: API Environment Validation and Client Initialization
+    # Step 2B-1: API Environment Validation and Client Initialization
     # Extract the necessary credential key token from the local environment.
     # If the token is missing, log a critical failure and terminate the system.
     # Otherwise, instantiate the official Google GenAI Client utility.
@@ -41,7 +41,7 @@ def main():
     client = genai.Client(api_key=api_key)
 
     # -------------------------------------------------------------------------
-    # TODO: Structured Output Response Schema Definition
+    # Step 2B-2: Structured Output Response Schema Definition
     # To prevent the LLM from returning unpredictable formats that would crash
     # downstream applications, define a strict "Data Contract" using a JSON 
     # Schema layout. 
@@ -86,7 +86,7 @@ def main():
             continue
             
         # ---------------------------------------------------------------------
-        # TODO: Inbound String Stream Deserialization
+        # Step 2B-3: Inbound String Stream Deserialization
         # Safely wrap your stream ingestion inside an isolated try-except block.
         # Parse the raw line string object into a key-value dictionary and 
         # extract the target 'video_id' and 'raw_text' properties. 
@@ -110,7 +110,7 @@ def main():
         """
 
         # ---------------------------------------------------------------------
-        # TODO 4: Structured Model Invocation and Instant Stream Flushing
+        # Step 2B-4: Structured Model Invocation and Instant Stream Flushing
         # Call the 'gemini-2.5-flash' model via the unified SDK interface.
         # Inject the constructed prompt along with the raw text sequence payload.
         # Map the configuration block to use the structured JSON mime-type 
