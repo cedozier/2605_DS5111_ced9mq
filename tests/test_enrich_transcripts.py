@@ -14,6 +14,9 @@ def test_enrich_transcripts_streaming_pipeline(monkeypatch, capsys):
     Verifies that main() reads mock lines from stdin, calls the Gemini client structure,
     and streams verified JSON objects out to stdout without making live API network requests.
     """
+    # Provide a fake API key so the fast-fail check in main() doesn't trigger
+    monkeypatch.setenv("GEMINI_API_KEY", "fake-test-key-12345")
+
     # 2. Mock out the core GenAI Client methods
     def mock_generate_content(self, model, contents, config=None):
         # Return a pre-baked, schema-compliant JSON string mimicking the model output
