@@ -27,7 +27,7 @@ def main():
     and add helpful metadata features (technical terms and books). 
     """
     logging.info("Pipeline Step 2B (Gemini Enrichment) started.")
-    
+
     # -------------------------------------------------------------------------
     # Step 2B-1: API Environment Validation and Client Initialization
     # Extract the necessary credential key token from the local environment.
@@ -43,9 +43,9 @@ def main():
     # -------------------------------------------------------------------------
     # Step 2B-2: Structured Output Response Schema Definition
     # To prevent the LLM from returning unpredictable formats that would crash
-    # downstream applications, define a strict "Data Contract" using a JSON 
-    # Schema layout. 
-    # 
+    # downstream applications, define a strict "Data Contract" using a JSON
+    # Schema layout.
+    #
     # Enforce a response type of "OBJECT" that guarantees the presence of:
     #   - video_id: (STRING, Required)
     #   - cleaned_text: (STRING, Required)
@@ -84,12 +84,12 @@ def main():
         line = line.strip()
         if not line:
             continue
-            
+
         # ---------------------------------------------------------------------
         # Step 2B-3: Inbound String Stream Deserialization
         # Safely wrap your stream ingestion inside an isolated try-except block.
-        # Parse the raw line string object into a key-value dictionary and 
-        # extract the target 'video_id' and 'raw_text' properties. 
+        # Parse the raw line string object into a key-value dictionary and
+        # extract the target 'video_id' and 'raw_text' properties.
         # Log any malformed line tracks and continue processing the stream.
         # ---------------------------------------------------------------------
         try:
@@ -102,7 +102,7 @@ def main():
             continue
 
         logging.info(f"Orchestrating Gemini enrichment for video: {video_id}")
-        
+
         prompt = f"""
         You are an elite data engineer. Clean this transcript text for video_id '{video_id}'.
         1. Strip all timestamps and duration codes.
@@ -113,16 +113,16 @@ def main():
         # Step 2B-4: Structured Model Invocation and Instant Stream Flushing
         # Call the 'gemini-2.5-flash' model via the unified SDK interface.
         # Inject the constructed prompt along with the raw text sequence payload.
-        # Map the configuration block to use the structured JSON mime-type 
+        # Map the configuration block to use the structured JSON mime-type
         # and enforce your defined response schema parameters.
         # Write the resulting text explicitly to sys.stdout and flush immediately.
         # ---------------------------------------------------------------------
         try:
             response = client.models.generate_content(
                 model = 'gemini-2.5-flash',
-                contents = raw_text, 
+                contents = raw_text,
                 config = types.GenerateContentConfig(
-                    system_instruction = prompt, 
+                    system_instruction = prompt,
                     response_schema = response_schema,
                     response_mime_type = "application/json",
                     temperature = 0.1
