@@ -11,7 +11,7 @@ import re
 def main():
     """Main function runs script logic"""
     logger = logging.getLogger(__name__)
-    logging.basicConfig(filename='pipeline_autid.log',encoding='utf-8', filemode='w',
+    logging.basicConfig(filename='pipeline/logs/pipeline_autid.log',encoding='utf-8', filemode='w',
                         level=logging.INFO, format = '%(message)s')
 
     def check_youtube_id(id_to_check):

@@ -16,7 +16,7 @@ jobs:
         python-version: ['3.14']
       # Optional: set fail-fast to false so one failing version doesn't cancel the other
       fail-fast: false
-      
+
     steps:
     - name: Check out repository code
       uses: actions/checkout@v4
@@ -24,12 +24,12 @@ jobs:
     - name: Set up Python runtime
       uses: actions/setup-python@v5
       with:
-        python-version: ${{ matrix.python-version }} 
+        python-version: ${{ matrix.python-version }}
 
     - name: Check Python Version
       run: |
         python --version
-        
+
     - name: Install pipeline dependencies
       run: |
         make update

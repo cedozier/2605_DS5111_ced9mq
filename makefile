@@ -8,7 +8,7 @@ update:  env
 	. env/bin/activate; pip install -r requirements.txt
 
 lint:
-	. env/bin/activate && pylint clean_ids.py
+	. env/bin/activate && pylint bin/
 
 test: lint
 	. env/bin/activate && pytest -vv tests

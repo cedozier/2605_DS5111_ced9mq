@@ -1,7 +1,7 @@
 import sys
 import io
 import pytest
-from clean_ids import main
+from bin.clean_ids import main
 import platform
 
 
