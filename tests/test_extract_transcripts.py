@@ -1,15 +1,22 @@
+"""
+Tests the extract_transcripts.py script.
+"""
 import sys
 import io
 import json
-import pytest
 from youtube_transcript_api import YouTubeTranscriptApi
 
 # Import the executable main entry point loop from your pipeline package directory
 from bin.extract_transcripts import main
 
-class MockTranscriptContainer:
-    """Mimics the 2026 .to_raw_data() array output return schema"""
+class MockTranscriptContainer: # pylint: disable=too-few-public-methods
+    """
+    Mimics the 2026 .to_raw_data() array output return schema
+    """
     def to_raw_data(self):
+        """
+        Return canned transcript segment data, mimicking the real API's shape.
+        """
         return [
             {"start": 10.5, "text": "Automated container tracking loop text entry."}
         ]
@@ -21,7 +28,7 @@ def test_extract_transcripts_main_pipeline_stream(monkeypatch, capsys):
     Serves as starting test.
     """
     # 1. Mock the external third-party API fetch dependency
-    def stubbed_fetch_route(self, video_id):
+    def stubbed_fetch_route(self, video_id):  # pylint: disable=unused-argument
         return MockTranscriptContainer()
     monkeypatch.setattr(YouTubeTranscriptApi, "fetch", stubbed_fetch_route)
 
@@ -51,7 +58,7 @@ def test_extract_transcripts_main_multiple_ids(monkeypatch, capsys):
     Verifies that the main() loop correctly processes multiple video IDs
     and emits one JSON line per valid input ID.
     """
-    def stubbed_fetch_route(self, video_id):
+    def stubbed_fetch_route(self, video_id):  # pylint: disable=unused-argument
         return MockTranscriptContainer()
     monkeypatch.setattr(YouTubeTranscriptApi, "fetch", stubbed_fetch_route)
 
@@ -80,7 +87,7 @@ def test_extract_transcripts_main_handles_fetch_error(monkeypatch, capsys):
     """
     # Mock fetch to raise an exception (simulates invalid/blocked video ID)
     def stubbed_fetch_error(self, video_id):
-        raise Exception("Video unavailable or invalid ID")
+        raise Exception("Video unavailable or invalid ID") # pylint: disable=broad-exception-raised
     monkeypatch.setattr(YouTubeTranscriptApi, "fetch", stubbed_fetch_error)
 
     # Feed a fake bad video ID via stdin
