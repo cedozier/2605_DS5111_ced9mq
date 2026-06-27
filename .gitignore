@@ -14,9 +14,8 @@ dist/
 downloads/
 eggs/
 .eggs/
-lib/
+lib/*
 lib64/
-echo '!lib/' >> .gitignore
 parts/
 sdist/
 var/
@@ -217,3 +216,4 @@ __marimo__/
 
 # Streamlit
 .streamlit/secrets.toml
+!lib/.gitkeep
