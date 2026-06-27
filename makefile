@@ -4,7 +4,7 @@ PIP = $(ENV)/bin/pip
 PYLINT = $(ENV)/bin/pylint
 PYTEST = $(ENV)/bin/pytest
 
-.PHONY: default env update lint test test_enrich run run_clean_ids run_extract run_enrich
+.PHONY: default env update lint test check test_enrich run run_clean_ids run_extract run_enrich
 
 default:
 	@cat makefile
@@ -21,8 +21,10 @@ update:  env
 lint:
 	$(PYLINT) bin/ lib/ tests/
 
-test: lint
+test:
 	$(PYTEST) -vv tests
+
+check: lint test
 
 test_enrich:
 	@cat mock_transcripts.jsonl | $(PYTHON) -u bin/enrich_transcripts.py | $(PYTHON) bin/validate_schema.py
