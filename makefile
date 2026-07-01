@@ -1,17 +1,41 @@
+ENV = env
+PYTHON = $(ENV)/bin/python3
+PIP = $(ENV)/bin/pip
+PYLINT = $(ENV)/bin/pylint
+PYTEST = $(ENV)/bin/pytest
+
+.PHONY: default env update lint test check test_enrich run run_clean_ids run_extract run_enrich
+
 default:
 	@cat makefile
 
-env:
-	python3 -m venv env; . env/bin/activate; pip install --upgrade pip
+env: $(ENV)/bin/activate
+
+$(ENV)/bin/activate:
+	python3 -m venv $(ENV)
+	$(PIP) install --upgrade pip
 
 update:  env
-	. env/bin/activate; pip install -r requirements.txt
+	$(PIP) install -r requirements.txt
 
 lint:
-	. env/bin/activate && pylint bin/
+	$(PYLINT) bin/ lib/ tests/
 
-test: lint
-	. env/bin/activate && pytest -vv tests
+test:
+	$(PYTEST) -vv tests
+
+check: lint test
 
 test_enrich:
-	@. env/bin/activate && cat mock_transcripts.jsonl | python -u bin/enrich_transcripts.py | python bin/validate_schema.py
+	@cat mock_transcripts.jsonl | $(PYTHON) -u bin/enrich_transcripts.py | $(PYTHON) bin/validate_schema.py
+
+run_clean_ids:
+	@cat sample_ids/youtube_ids | $(PYTHON) bin/clean_ids.py
+
+run_extract:
+	@cat sample_ids/youtube_ids | $(PYTHON) bin/clean_ids.py | $(PYTHON) bin/extract_transcripts.py
+
+run_enrich:
+	@cat sample_ids/youtube_ids | $(PYTHON) bin/clean_ids.py | $(PYTHON) bin/extract_transcripts.py | $(PYTHON) bin/enrich_transcripts.py
+
+run: run_enrich
