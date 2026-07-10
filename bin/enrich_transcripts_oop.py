@@ -7,11 +7,14 @@ various LLMs.
 import sys
 import os
 import json
-import logging
-from abc import ABC, abstractmethod
+import argparse
 from dotenv import load_dotenv
+from abc import ABC, abstractmethod
 from google import genai
 from google.genai import types
+
+# Load environmental configurations from local workspace files
+load_dotenv()
 
 class LLMStrategy(ABC): # pylint: disable=too-few-public-methods
     """
@@ -82,3 +85,60 @@ class GeminiStrategy(LLMStrategy): # pylint: disable=too-few-public-methods
             raise ValueError(f"Failed processing video {video_id} during LLM generation: {str(e)}") from e
 
         return json.loads(response.text)
+
+class TranscriptEnricher: # pylint: disable=too-few-public-methods
+    """
+    Invariant pipeline context that drives an injected LLMStrategy over a
+    stream of JSON-encoded transcript records from stdin.
+    """
+    def __init__(self, strategy: LLMStrategy):
+        self.strategy = strategy
+
+    def run_stream(self):
+        """
+        Runs the data streaming loop. 
+        """
+        for line in sys.stdin:
+            line = line.strip()
+            if not line:
+                continue
+
+            try:
+                payload = json.loads(line)
+                video_id = payload['video_id']
+                raw_text = payload['raw_text']
+            except Exception as e:
+                sys.stderr.write(f"ERROR parsing input line: {str(e)}\n")
+                sys.stderr.flush()
+                continue
+
+            try:
+                result = self.strategy.enrich(video_id, raw_text)
+                sys.stdout.write(json.dumps(result) + "\n")
+                sys.stdout.flush()
+            except Exception as e:
+                sys.stderr.write(f"ERROR processing token [{video_id}]: {str(e)}\n")
+                sys.stderr.flush()
+
+def main(argv=None):
+    """
+    Runtime entrypoint: parses CLI flags, selects an LLMStrategy, and
+    drives it through TranscriptEnricher.
+    """
+    parser = argparse.ArgumentParser(description="Multi-Vendor Transcript Enrichment Node.")
+    parser.add_argument(
+        "--llm",
+        choices=["gemini"], 
+        default="gemini",
+        help="Target LLM enrichment strategy (Defaults to gemini)."
+    )
+    args = parser.parse_args(argv)
+
+    if args.llm == "gemini":
+        selected_strategy = GeminiStrategy()
+
+    engine = TranscriptEnricher(selected_strategy)
+    engine.run_stream()
+
+if __name__ == "__main__":
+    main()
