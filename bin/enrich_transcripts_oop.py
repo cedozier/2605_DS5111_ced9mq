@@ -8,8 +8,8 @@ import sys
 import os
 import json
 import argparse
-from dotenv import load_dotenv
 from abc import ABC, abstractmethod
+from dotenv import load_dotenv
 from google import genai
 from google.genai import types
 
@@ -128,7 +128,7 @@ def main(argv=None):
     parser = argparse.ArgumentParser(description="Multi-Vendor Transcript Enrichment Node.")
     parser.add_argument(
         "--llm",
-        choices=["gemini"], 
+        choices=["gemini"],
         default="gemini",
         help="Target LLM enrichment strategy (Defaults to gemini)."
     )
@@ -136,6 +136,8 @@ def main(argv=None):
 
     if args.llm == "gemini":
         selected_strategy = GeminiStrategy()
+    else:
+        raise ValueError(f"Unsupported LLM strategy: {args.llm}")
 
     engine = TranscriptEnricher(selected_strategy)
     engine.run_stream()
