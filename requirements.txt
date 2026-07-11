@@ -7,4 +7,4 @@ youtube_transcript_api
 jupyter
 jupyterlab
 google-genai
-snowflake
+snowflake-connector-python
