@@ -58,7 +58,7 @@ def main():
     try:
         cs.execute("""
             CREATE TABLE IF NOT EXISTS RAW_TRANSCRIPTS (
-                json_payload VARIANT 
+                json_payload VARIANT, 
                 inserted_at TIMESTAMP_NTZ DEFAULT CURRENT_TIMESTAMP()
             )
         """)
