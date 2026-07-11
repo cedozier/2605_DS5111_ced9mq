@@ -40,7 +40,7 @@ def main():
             account=os.getenv('SF_ACCOUNT'),
             warehouse=os.getenv('SF_WAREHOUSE'),
             database=os.getenv('SF_DATABASE'),
-            schema=os.getenv('SF_SCHEMA')
+            schema=os.getenv('SF_SCHEMA'),
             role=os.getenv('SF_ROLE')
         )
         cs = ctx.cursor()
