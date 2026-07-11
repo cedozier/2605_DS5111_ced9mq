@@ -4,7 +4,7 @@ PIP = $(ENV)/bin/pip
 PYLINT = $(ENV)/bin/pylint
 PYTEST = $(ENV)/bin/pytest
 
-.PHONY: default env update lint test check test_enrich run run_clean_ids run_extract run_enrich
+.PHONY: default env update lint test check test_enrich run run_clean_ids run_extract run_enrich load
 
 default:
 	@cat makefile
@@ -40,5 +40,13 @@ run_extract:
 
 run_enrich:
 	@cat sample_ids/youtube_ids | $(PYTHON) bin/clean_ids.py | $(PYTHON) bin/extract_transcripts.py | $(PYTHON) bin/enrich_transcripts.py
+
+data/enriched_transcripts.jsonl:
+	@mkdir -p data
+	@cat sample_ids/youtube_ids | $(PYTHON) bin/clean_ids.py | $(PYTHON) bin/extract_transcripts.py | $(PYTHON) bin/enrich_transcripts.py > data/enriched_transcripts.jsonl
+
+load: data/enriched_transcripts.jsonl
+	@echo "Initiating Cloud Data Warehouse Synchronizer Node..."
+	@cat data/enriched_transcripts.jsonl | $(PYTHON) bin/load_snowflake.py
 
 run: run_enrich
