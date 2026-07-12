@@ -39,11 +39,11 @@ run_extract:
 	@cat sample_ids/youtube_ids | $(PYTHON) bin/clean_ids.py | $(PYTHON) bin/extract_transcripts.py
 
 run_enrich:
-	@cat sample_ids/youtube_ids | $(PYTHON) bin/clean_ids.py | $(PYTHON) bin/extract_transcripts.py | $(PYTHON) bin/enrich_transcripts.py
+	@cat sample_ids/youtube_ids | $(PYTHON) bin/clean_ids.py | $(PYTHON) bin/extract_transcripts.py | $(PYTHON) bin/enrich_transcripts_oop.py
 
-data/enriched_transcripts.jsonl:
+data/enriched_transcripts.jsonl: sample_ids/youtube_ids
 	@mkdir -p data
-	@cat sample_ids/youtube_ids | $(PYTHON) bin/clean_ids.py | $(PYTHON) bin/extract_transcripts.py | $(PYTHON) bin/enrich_transcripts.py > data/enriched_transcripts.jsonl
+	@cat sample_ids/youtube_ids | $(PYTHON) bin/clean_ids.py | $(PYTHON) bin/extract_transcripts.py | $(PYTHON) bin/enrich_transcripts_oop.py > data/enriched_transcripts.jsonl
 
 load: data/enriched_transcripts.jsonl
 	@echo "Initiating Cloud Data Warehouse Synchronizer Node..."
