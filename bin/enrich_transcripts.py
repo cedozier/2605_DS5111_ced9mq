@@ -128,7 +128,8 @@ def main():
                     temperature = 0.1
                 )
             )
-            sys.stdout.write(response.text + "\n")
+            result = json.loads(response.text)
+            sys.stdout.write(json.dumps(result) + "\n")
             sys.stdout.flush()
         except Exception as e:
             logging.error(f"Failed processing video {video_id} during LLM generation: {str(e)}")
