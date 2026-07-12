@@ -1,4 +1,8 @@
 # File location: bin/load_snowflake.py
+"""
+Module that connects to Snowflake and loads enriched transcript data
+into database.
+"""
 import sys
 import os
 import json
@@ -14,6 +18,13 @@ logging.basicConfig(
 )
 
 def main():
+    """
+    Executes the following sequence:
+    1. Connects to Snowflake.
+    2. Performs semi-structured polymorphic schema verification.
+    3. Executes safe parameterized insertion into the database. 
+    4. Closes the Snowflake connection.
+    """
     # Initialize the environment variables from the local .env file
     load_dotenv()  # <-- Added to ensure os.getenv() does not return None
 
@@ -27,11 +38,11 @@ def main():
     # -------------------------------------------------------------------------
     sf_user = os.getenv('SF_USER')
     sf_password = os.getenv('SF_PASSWORD')
-    
+
     if not sf_user or not sf_password:
         logging.critical("Missing critical Snowflake runtime credential bindings. Ingestion aborted.")
         sys.exit(1)
-        
+
     try:
         # Pass the pre-extracted user/password variables along with remaining context configs
         ctx = snowflake.connector.connect(
@@ -49,10 +60,10 @@ def main():
         sys.exit(1)
 
     # -------------------------------------------------------------------------
-    # Semi-Structured Polymorphic Schema Verification (DDL) 
+    # Semi-Structured Polymorphic Schema Verification (DDL)
     # Execute a DDL statement to guarantee the target landing table exists.
-    # The table configuration MUST feature an active 'VARIANT' type data column 
-    # to hold the raw unstructured polymorphic incoming document strings efficiently, 
+    # The table configuration MUST feature an active 'VARIANT' type data column
+    # to hold the raw unstructured polymorphic incoming document strings efficiently,
     # alongside a default transactional generation record ingestion timestamp.
     # -------------------------------------------------------------------------
     try:
@@ -83,17 +94,17 @@ def main():
         cleaned_line = line.strip()
         if not cleaned_line:
             continue
-            
+
         try:
             # Safely validate structural correctness before invoking remote storage
             json_data = json.loads(cleaned_line)
-            
+
             # Execute safe parameterized insertion. json.dumps() handles turning the
             # validated python dictionary cleanly back into a serialized string payload.
 
             query = "INSERT INTO RAW_TRANSCRIPTS (json_payload) SELECT PARSE_JSON(%s)"
             cs.execute(query, (json.dumps(json_data), ))
-            
+
             # Left intact from your original template design:
             logging.info(f"Loaded entry token item target: [{json_data.get('video_id', 'UNKNOWN')}] safely to warehouse.")
         except Exception as e:
@@ -101,7 +112,7 @@ def main():
 
     # -------------------------------------------------------------------------
     # Defensive Resource Reclamation Lifecycle
-    # Ensure that resource cursors and connection pools are definitively closed 
+    # Ensure that resource cursors and connection pools are definitively closed
     # out down to the operating system runtime container layout.
     # -------------------------------------------------------------------------
     cs.close()
