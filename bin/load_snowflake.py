@@ -62,7 +62,7 @@ def main():
                 inserted_at TIMESTAMP_NTZ DEFAULT CURRENT_TIMESTAMP()
             )
         """)
-
+        cs.execute("TRUNCATE TABLE RAW_TRANSCRIPTS") # prevents duplicating when rerunning pipeline
     except Exception as e:
         logging.error(f"Failed to execute target structural validation DDL: {str(e)}")
         cs.close()
