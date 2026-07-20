@@ -50,3 +50,17 @@ load: data/enriched_transcripts.jsonl
 	@cat data/enriched_transcripts.jsonl | $(PYTHON) bin/load_snowflake.py
 
 run: run_enrich
+
+# --- Docker config ---
+DOCKER_USER ?= <dockerhub_username>
+IMAGE_NAME = ds5111-pipeline
+IMAGE_TAG = latest
+IMAGE = $(DOCKER_USER)/$(IMAGE_NAME):$(IMAGE_TAG)
+
+.PHONY: docker-build docker-images
+
+docker-build:
+	docker build -t $(IMAGE) .
+
+docker-images:
+	docker images | grep $(IMAGE_NAME)
