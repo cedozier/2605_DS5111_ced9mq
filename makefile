@@ -29,6 +29,9 @@ check: lint test
 test_enrich:
 	@cat mock_transcripts.jsonl | $(PYTHON) -u bin/enrich_transcripts.py | $(PYTHON) bin/validate_schema.py
 
+test_enrich_oop:
+	@cat mock_transcripts.jsonl | $(PYTHON) -u bin/enrich_transcripts_oop.py | $(PYTHON) bin/validate_schema.py
+
 run_clean_ids:
 	@cat sample_ids/youtube_ids | $(PYTHON) bin/clean_ids.py
 
