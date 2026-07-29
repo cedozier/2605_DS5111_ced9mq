@@ -50,3 +50,30 @@ load: data/enriched_transcripts.jsonl
 	@cat data/enriched_transcripts.jsonl | $(PYTHON) bin/load_snowflake.py
 
 run: run_enrich
+
+# --- Docker config ---
+DOCKER_USER ?= <dockerhub_username>
+IMAGE_NAME = ds5111-pipeline
+IMAGE_TAG = latest
+IMAGE = $(DOCKER_USER)/$(IMAGE_NAME):$(IMAGE_TAG)
+IDS_FILE = sample_ids/youtube_ids
+ENV_FILE = .env.docker
+
+.PHONY: docker-build docker-images docker-shortcircuit docker-run
+
+docker-build:
+	docker build -t $(IMAGE) .
+
+docker-images:
+	docker images | grep $(IMAGE_NAME)
+
+# Short-circuit test to override CMD to run clean_ids + extract only,
+# stopping before enrichment/Snowflake load
+docker-shortcircuit:
+	cat $(IDS_FILE) | docker run -i --env-file $(ENV_FILE) $(IMAGE) \
+		bash -c "python bin/clean_ids.py | python bin/extract_transcripts.py"
+
+# Full end-to-end pipeline using the image's default CMD
+# (clean_ids -> extract -> enrich_oop -> load_snowflake)
+docker-run:
+	cat $(IDS_FILE) | docker run -i --env-file $(ENV_FILE) $(IMAGE)
