@@ -8,3 +8,4 @@ jupyter
 jupyterlab
 google-genai
 snowflake-connector-python
+dbt-snowflake
